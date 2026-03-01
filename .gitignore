@@ -1,0 +1,17 @@
+﻿################################################################################
+# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
+################################################################################
+
+/.vs
+/SusiePluginCom.vcxproj.user
+/source/.vs/SusiePluginCom.slnx/v18
+/source/x64/Debug
+/source/TestCppConsole/TestCppConsole.vcxproj.user
+/source/TestCppConsole/x64/Debug
+/source/TestCppConsole/Debug
+/source/SusiePluginCom/Release
+/source/SusiePluginCom/Debug
+/source/.vs
+/source/Debug
+/source/Release
+*.user
