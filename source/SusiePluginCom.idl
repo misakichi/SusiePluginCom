@@ -1,0 +1,29 @@
+﻿import "oaidl.idl";
+
+[
+    uuid(852CFAED-6900-492F-B0DE-05EA9AF31E68),
+    version(1.0)
+]
+library SusiePluginCom
+{
+    importlib("stdole2.tlb");
+
+    [
+        object,
+        uuid(35841F94-BF72-4EA7-92C0-439BF050556D), // IID
+        pointer_default(unique)
+    ]
+    interface ISusie : IUnknown 
+    {
+        HRESULT Load([in] BSTR path);
+		HRESULT GetPluginInfo(int infono, [out] BSTR* buf);
+    };
+
+    [
+        uuid(6FD27283-665F-47F8-A627-CEBF40C0B95D) // CLSID
+    ]
+    coclass SusieWrapper 
+    {
+        [default] interface ISusie;
+    };
+};

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity
+      type="win32"
+      name="SusiePluginCom"
+      version="1.0.0.0" />
+
+  <file name="SusiePluginCom.dll">
+    <comClass
+        clsid="{6FD27283-665F-47F8-A627-CEBF40C0B95D}"
+        threadingModel="Both"
+        tlbid="{852CFAED-6900-492F-B0DE-05EA9AF31E68}"
+        progid="SusiePluginCom.SusieWrapper"
+        description="Susie Plugin COM Wrapper" />
+  </file>
+</assembly>

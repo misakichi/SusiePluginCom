@@ -1,0 +1,204 @@
+
+
+/* this ALWAYS GENERATED file contains the definitions for the interfaces */
+
+
+ /* File created by MIDL compiler version 8.01.0628 */
+/* at Tue Jan 19 12:14:07 2038
+ */
+/* Compiler settings for SusiePluginCom.idl:
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0628 
+    protocol : dce , ms_ext, c_ext, robust
+    error checks: allocation ref bounds_check enum stub_data 
+    VC __declspec() decoration level: 
+         __declspec(uuid()), __declspec(selectany), __declspec(novtable)
+         DECLSPEC_UUID(), MIDL_INTERFACE()
+*/
+/* @@MIDL_FILE_HEADING(  ) */
+
+
+
+/* verify that the <rpcndr.h> version is high enough to compile this file*/
+#ifndef __REQUIRED_RPCNDR_H_VERSION__
+#define __REQUIRED_RPCNDR_H_VERSION__ 500
+#endif
+
+#include "rpc.h"
+#include "rpcndr.h"
+
+#ifndef __RPCNDR_H_VERSION__
+#error this stub requires an updated version of <rpcndr.h>
+#endif /* __RPCNDR_H_VERSION__ */
+
+
+#ifndef __SusiePluginCom_i_h__
+#define __SusiePluginCom_i_h__
+
+#if defined(_MSC_VER) && (_MSC_VER >= 1020)
+#pragma once
+#endif
+
+#ifndef DECLSPEC_XFGVIRT
+#if defined(_CONTROL_FLOW_GUARD_XFG)
+#define DECLSPEC_XFGVIRT(base, func) __declspec(xfg_virtual(base, func))
+#else
+#define DECLSPEC_XFGVIRT(base, func)
+#endif
+#endif
+
+/* Forward Declarations */ 
+
+#ifndef __ISusie_FWD_DEFINED__
+#define __ISusie_FWD_DEFINED__
+typedef interface ISusie ISusie;
+
+#endif 	/* __ISusie_FWD_DEFINED__ */
+
+
+#ifndef __SusieWrapper_FWD_DEFINED__
+#define __SusieWrapper_FWD_DEFINED__
+
+#ifdef __cplusplus
+typedef class SusieWrapper SusieWrapper;
+#else
+typedef struct SusieWrapper SusieWrapper;
+#endif /* __cplusplus */
+
+#endif 	/* __SusieWrapper_FWD_DEFINED__ */
+
+
+/* header files for imported files */
+#include "oaidl.h"
+
+#ifdef __cplusplus
+extern "C"{
+#endif 
+
+
+
+#ifndef __SusiePluginCom_LIBRARY_DEFINED__
+#define __SusiePluginCom_LIBRARY_DEFINED__
+
+/* library SusiePluginCom */
+/* [version][uuid] */ 
+
+
+EXTERN_C const IID LIBID_SusiePluginCom;
+
+#ifndef __ISusie_INTERFACE_DEFINED__
+#define __ISusie_INTERFACE_DEFINED__
+
+/* interface ISusie */
+/* [unique][uuid][object] */ 
+
+
+EXTERN_C const IID IID_ISusie;
+
+#if defined(__cplusplus) && !defined(CINTERFACE)
+    
+    MIDL_INTERFACE("35841F94-BF72-4EA7-92C0-439BF050556D")
+    ISusie : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE Load( 
+            /* [in] */ BSTR path) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetPluginInfo( 
+            int infono,
+            /* [out] */ BSTR *buf) = 0;
+        
+    };
+    
+    
+#else 	/* C style interface */
+
+    typedef struct ISusieVtbl
+    {
+        BEGIN_INTERFACE
+        
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ISusie * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ISusie * This);
+        
+        DECLSPEC_XFGVIRT(IUnknown, Release)
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ISusie * This);
+        
+        DECLSPEC_XFGVIRT(ISusie, Load)
+        HRESULT ( STDMETHODCALLTYPE *Load )( 
+            ISusie * This,
+            /* [in] */ BSTR path);
+        
+        DECLSPEC_XFGVIRT(ISusie, GetPluginInfo)
+        HRESULT ( STDMETHODCALLTYPE *GetPluginInfo )( 
+            ISusie * This,
+            int infono,
+            /* [out] */ BSTR *buf);
+        
+        END_INTERFACE
+    } ISusieVtbl;
+
+    interface ISusie
+    {
+        CONST_VTBL struct ISusieVtbl *lpVtbl;
+    };
+
+    
+
+#ifdef COBJMACROS
+
+
+#define ISusie_QueryInterface(This,riid,ppvObject)	\
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+
+#define ISusie_AddRef(This)	\
+    ( (This)->lpVtbl -> AddRef(This) ) 
+
+#define ISusie_Release(This)	\
+    ( (This)->lpVtbl -> Release(This) ) 
+
+
+#define ISusie_Load(This,path)	\
+    ( (This)->lpVtbl -> Load(This,path) ) 
+
+#define ISusie_GetPluginInfo(This,infono,buf)	\
+    ( (This)->lpVtbl -> GetPluginInfo(This,infono,buf) ) 
+
+#endif /* COBJMACROS */
+
+
+#endif 	/* C style interface */
+
+
+
+
+#endif 	/* __ISusie_INTERFACE_DEFINED__ */
+
+
+EXTERN_C const CLSID CLSID_SusieWrapper;
+
+#ifdef __cplusplus
+
+class DECLSPEC_UUID("6FD27283-665F-47F8-A627-CEBF40C0B95D")
+SusieWrapper;
+#endif
+#endif /* __SusiePluginCom_LIBRARY_DEFINED__ */
+
+/* Additional Prototypes for ALL interfaces */
+
+/* end of Additional Prototypes */
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif
+
+
