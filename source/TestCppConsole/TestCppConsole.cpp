@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <Windows.h>
+#include "olectl.h"
 
 #include "../SusiePluginCom_i.h"
 #include "../SusiePluginCom_i.c"
@@ -13,8 +14,14 @@ constexpr auto CLCTX_SERVER_TYPE = CLSCTX_INPROC_SERVER;
 constexpr auto CLCTX_SERVER_TYPE = CLSCTX_LOCAL_SERVER | CLSCTX_INPROC_SERVER;
 #endif
 
+HRESULT DllRegisterServer_NoInProcServer();
+
 int main()
 {
+	if(FAILED(DllRegisterServer_NoInProcServer()))
+	{
+		printf("Failed to register COM server.\n");
+	}
 	if (FAILED(CoInitialize(nullptr)))
 	{
 		printf("Failed to initialize COM library.\n");
@@ -27,21 +34,27 @@ int main()
 	if(SUCCEEDED(hr) && plugin)
 	{
 		printf("Plugin interface create successfully.\n");
-		if(FAILED(plugin->Load(SysAllocString(L"ifjpeg.spi"))))
+		if(FAILED(hr = plugin->Load(SysAllocString(L"C:\\projects\\SusiePluginCom\\source\\Debug\\ifjpeg.spi"))))
 		{
 			printf("Failed to load SPI.\n");
 		}
 		else
 		{
 			BSTR info;
-			if (SUCCEEDED(plugin->GetPluginInfo(0, &info)))
+			int infono = 0;
+			while (1)
 			{
-				wprintf(L"Plugin Info: %ls\n", info);
-				SysFreeString(info);
-			}
-			else
-			{
-				printf("Failed to get plugin info.\n");
+				if (SUCCEEDED(plugin->GetPluginInfo(infono, &info)))
+				{
+					wprintf(L"Plugin Info(%d): %ls\n", infono, info);
+					SysFreeString(info);
+				}
+				else
+				{
+					printf("Failed to get plugin info(%d).\n", infono);
+					break;
+				}
+				infono++;
 			}
 		}
 		plugin->Release();

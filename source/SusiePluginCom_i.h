@@ -1,4 +1,4 @@
-
+﻿
 
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
@@ -7,12 +7,12 @@
 /* at Tue Jan 19 12:14:07 2038
  */
 /* Compiler settings for SusiePluginCom.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0628 
-    protocol : dce , ms_ext, c_ext, robust
-    error checks: allocation ref bounds_check enum stub_data 
-    VC __declspec() decoration level: 
-         __declspec(uuid()), __declspec(selectany), __declspec(novtable)
-         DECLSPEC_UUID(), MIDL_INTERFACE()
+	Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0628 
+	protocol : dce , ms_ext, c_ext, robust
+	error checks: allocation ref bounds_check enum stub_data 
+	VC __declspec() decoration level: 
+		 __declspec(uuid()), __declspec(selectany), __declspec(novtable)
+		 DECLSPEC_UUID(), MIDL_INTERFACE()
 */
 /* @@MIDL_FILE_HEADING(  ) */
 
@@ -89,87 +89,87 @@ EXTERN_C const IID LIBID_SusiePluginCom;
 #define __ISusie_INTERFACE_DEFINED__
 
 /* interface ISusie */
-/* [unique][uuid][object] */ 
+/* [oleautomation][unique][uuid][object] */ 
 
 
 EXTERN_C const IID IID_ISusie;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-    
-    MIDL_INTERFACE("35841F94-BF72-4EA7-92C0-439BF050556D")
-    ISusie : public IUnknown
-    {
-    public:
-        virtual HRESULT STDMETHODCALLTYPE Load( 
-            /* [in] */ BSTR path) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetPluginInfo( 
-            int infono,
-            /* [out] */ BSTR *buf) = 0;
-        
-    };
-    
-    
+	
+	MIDL_INTERFACE("35841F94-BF72-4EA7-92C0-439BF050556D")
+	ISusie : public IUnknown
+	{
+	public:
+		virtual HRESULT STDMETHODCALLTYPE Load( 
+			/* [in] */ BSTR path) = 0;
+		
+		virtual HRESULT STDMETHODCALLTYPE GetPluginInfo( 
+			int infono,
+			/* [retval][out] */ BSTR *buf) = 0;
+		
+	};
+	
+	
 #else 	/* C style interface */
 
-    typedef struct ISusieVtbl
-    {
-        BEGIN_INTERFACE
-        
-        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-            ISusie * This,
-            /* [in] */ REFIID riid,
-            /* [annotation][iid_is][out] */ 
-            _COM_Outptr_  void **ppvObject);
-        
-        DECLSPEC_XFGVIRT(IUnknown, AddRef)
-        ULONG ( STDMETHODCALLTYPE *AddRef )( 
-            ISusie * This);
-        
-        DECLSPEC_XFGVIRT(IUnknown, Release)
-        ULONG ( STDMETHODCALLTYPE *Release )( 
-            ISusie * This);
-        
-        DECLSPEC_XFGVIRT(ISusie, Load)
-        HRESULT ( STDMETHODCALLTYPE *Load )( 
-            ISusie * This,
-            /* [in] */ BSTR path);
-        
-        DECLSPEC_XFGVIRT(ISusie, GetPluginInfo)
-        HRESULT ( STDMETHODCALLTYPE *GetPluginInfo )( 
-            ISusie * This,
-            int infono,
-            /* [out] */ BSTR *buf);
-        
-        END_INTERFACE
-    } ISusieVtbl;
+	typedef struct ISusieVtbl
+	{
+		BEGIN_INTERFACE
+		
+		DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+		HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+			ISusie * This,
+			/* [in] */ REFIID riid,
+			/* [annotation][iid_is][out] */ 
+			_COM_Outptr_  void **ppvObject);
+		
+		DECLSPEC_XFGVIRT(IUnknown, AddRef)
+		ULONG ( STDMETHODCALLTYPE *AddRef )( 
+			ISusie * This);
+		
+		DECLSPEC_XFGVIRT(IUnknown, Release)
+		ULONG ( STDMETHODCALLTYPE *Release )( 
+			ISusie * This);
+		
+		DECLSPEC_XFGVIRT(ISusie, Load)
+		HRESULT ( STDMETHODCALLTYPE *Load )( 
+			ISusie * This,
+			/* [in] */ BSTR path);
+		
+		DECLSPEC_XFGVIRT(ISusie, GetPluginInfo)
+		HRESULT ( STDMETHODCALLTYPE *GetPluginInfo )( 
+			ISusie * This,
+			int infono,
+			/* [retval][out] */ BSTR *buf);
+		
+		END_INTERFACE
+	} ISusieVtbl;
 
-    interface ISusie
-    {
-        CONST_VTBL struct ISusieVtbl *lpVtbl;
-    };
+	interface ISusie
+	{
+		CONST_VTBL struct ISusieVtbl *lpVtbl;
+	};
 
-    
+	
 
 #ifdef COBJMACROS
 
 
 #define ISusie_QueryInterface(This,riid,ppvObject)	\
-    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+	( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
 #define ISusie_AddRef(This)	\
-    ( (This)->lpVtbl -> AddRef(This) ) 
+	( (This)->lpVtbl -> AddRef(This) ) 
 
 #define ISusie_Release(This)	\
-    ( (This)->lpVtbl -> Release(This) ) 
+	( (This)->lpVtbl -> Release(This) ) 
 
 
 #define ISusie_Load(This,path)	\
-    ( (This)->lpVtbl -> Load(This,path) ) 
+	( (This)->lpVtbl -> Load(This,path) ) 
 
 #define ISusie_GetPluginInfo(This,infono,buf)	\
-    ( (This)->lpVtbl -> GetPluginInfo(This,infono,buf) ) 
+	( (This)->lpVtbl -> GetPluginInfo(This,infono,buf) ) 
 
 #endif /* COBJMACROS */
 

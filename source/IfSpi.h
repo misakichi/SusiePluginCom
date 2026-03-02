@@ -8,10 +8,10 @@ struct SPIFunc;
 class SusiePluginIF : public ComBase<ISusiePluginIF, ISusie>
 {
 public:
-    HRESULT STDMETHODCALLTYPE Load(BSTR path) override;
-    HRESULT STDMETHODCALLTYPE GetPluginInfo(int infono, BSTR* buf) override;
+	HRESULT STDMETHODCALLTYPE Load(BSTR path) override;
+	HRESULT STDMETHODCALLTYPE GetPluginInfo(int infono, BSTR* buf) override;
 
 private:
-    HMODULE hModule_ = nullptr;
-    SPIFunc* spiFuncs_;
+	HMODULE hModule_ = nullptr;
+	SPIFunc* spiFuncs_;
 };
