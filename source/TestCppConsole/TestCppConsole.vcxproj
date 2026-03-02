@@ -130,6 +130,11 @@
     <ClCompile Include="RegKey.cpp" />
     <ClCompile Include="TestCppConsole.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SusiePluginCom.vcxproj">
+      <Project>{40f221cd-fa33-82b1-81ed-0fe84afb4461}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

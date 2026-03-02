@@ -28,7 +28,6 @@
     <ClInclude Include="combase.h" />
     <ClInclude Include="factory.h" />
     <ClInclude Include="IfSpi.h" />
-    <ClInclude Include="SusiePluginCom.h" />
     <ClInclude Include="SusiePluginCom_i.h" />
   </ItemGroup>
   <ItemGroup>

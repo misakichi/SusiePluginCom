@@ -1,4 +1,4 @@
-﻿
+
 
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
@@ -7,12 +7,12 @@
 /* at Tue Jan 19 12:14:07 2038
  */
 /* Compiler settings for SusiePluginCom.idl:
-	Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0628 
-	protocol : dce , ms_ext, c_ext, robust
-	error checks: allocation ref bounds_check enum stub_data 
-	VC __declspec() decoration level: 
-		 __declspec(uuid()), __declspec(selectany), __declspec(novtable)
-		 DECLSPEC_UUID(), MIDL_INTERFACE()
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0628 
+    protocol : dce , ms_ext, c_ext, robust
+    error checks: allocation ref bounds_check enum stub_data 
+    VC __declspec() decoration level: 
+         __declspec(uuid()), __declspec(selectany), __declspec(novtable)
+         DECLSPEC_UUID(), MIDL_INTERFACE()
 */
 /* @@MIDL_FILE_HEADING(  ) */
 
@@ -95,81 +95,107 @@ EXTERN_C const IID LIBID_SusiePluginCom;
 EXTERN_C const IID IID_ISusie;
 
 #if defined(__cplusplus) && !defined(CINTERFACE)
-	
-	MIDL_INTERFACE("35841F94-BF72-4EA7-92C0-439BF050556D")
-	ISusie : public IUnknown
-	{
-	public:
-		virtual HRESULT STDMETHODCALLTYPE Load( 
-			/* [in] */ BSTR path) = 0;
-		
-		virtual HRESULT STDMETHODCALLTYPE GetPluginInfo( 
-			int infono,
-			/* [retval][out] */ BSTR *buf) = 0;
-		
-	};
-	
-	
+    
+    MIDL_INTERFACE("35841F94-BF72-4EA7-92C0-439BF050556D")
+    ISusie : public IUnknown
+    {
+    public:
+        virtual HRESULT STDMETHODCALLTYPE Load( 
+            /* [in] */ BSTR path) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetPluginInfo( 
+            /* [in] */ int infono,
+            /* [retval][out] */ BSTR *buf) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE IsSupportedStream( 
+            /* [in] */ BSTR filename,
+            /* [in] */ IStream *stream) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE IsSupportedBuffer( 
+            /* [in] */ BSTR filename,
+            /* [in] */ SAFEARRAY * buffer) = 0;
+        
+    };
+    
+    
 #else 	/* C style interface */
 
-	typedef struct ISusieVtbl
-	{
-		BEGIN_INTERFACE
-		
-		DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
-		HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
-			ISusie * This,
-			/* [in] */ REFIID riid,
-			/* [annotation][iid_is][out] */ 
-			_COM_Outptr_  void **ppvObject);
-		
-		DECLSPEC_XFGVIRT(IUnknown, AddRef)
-		ULONG ( STDMETHODCALLTYPE *AddRef )( 
-			ISusie * This);
-		
-		DECLSPEC_XFGVIRT(IUnknown, Release)
-		ULONG ( STDMETHODCALLTYPE *Release )( 
-			ISusie * This);
-		
-		DECLSPEC_XFGVIRT(ISusie, Load)
-		HRESULT ( STDMETHODCALLTYPE *Load )( 
-			ISusie * This,
-			/* [in] */ BSTR path);
-		
-		DECLSPEC_XFGVIRT(ISusie, GetPluginInfo)
-		HRESULT ( STDMETHODCALLTYPE *GetPluginInfo )( 
-			ISusie * This,
-			int infono,
-			/* [retval][out] */ BSTR *buf);
-		
-		END_INTERFACE
-	} ISusieVtbl;
+    typedef struct ISusieVtbl
+    {
+        BEGIN_INTERFACE
+        
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
+        HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+            ISusie * This,
+            /* [in] */ REFIID riid,
+            /* [annotation][iid_is][out] */ 
+            _COM_Outptr_  void **ppvObject);
+        
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
+        ULONG ( STDMETHODCALLTYPE *AddRef )( 
+            ISusie * This);
+        
+        DECLSPEC_XFGVIRT(IUnknown, Release)
+        ULONG ( STDMETHODCALLTYPE *Release )( 
+            ISusie * This);
+        
+        DECLSPEC_XFGVIRT(ISusie, Load)
+        HRESULT ( STDMETHODCALLTYPE *Load )( 
+            ISusie * This,
+            /* [in] */ BSTR path);
+        
+        DECLSPEC_XFGVIRT(ISusie, GetPluginInfo)
+        HRESULT ( STDMETHODCALLTYPE *GetPluginInfo )( 
+            ISusie * This,
+            /* [in] */ int infono,
+            /* [retval][out] */ BSTR *buf);
+        
+        DECLSPEC_XFGVIRT(ISusie, IsSupportedStream)
+        HRESULT ( STDMETHODCALLTYPE *IsSupportedStream )( 
+            ISusie * This,
+            /* [in] */ BSTR filename,
+            /* [in] */ IStream *stream);
+        
+        DECLSPEC_XFGVIRT(ISusie, IsSupportedBuffer)
+        HRESULT ( STDMETHODCALLTYPE *IsSupportedBuffer )( 
+            ISusie * This,
+            /* [in] */ BSTR filename,
+            /* [in] */ SAFEARRAY * buffer);
+        
+        END_INTERFACE
+    } ISusieVtbl;
 
-	interface ISusie
-	{
-		CONST_VTBL struct ISusieVtbl *lpVtbl;
-	};
+    interface ISusie
+    {
+        CONST_VTBL struct ISusieVtbl *lpVtbl;
+    };
 
-	
+    
 
 #ifdef COBJMACROS
 
 
 #define ISusie_QueryInterface(This,riid,ppvObject)	\
-	( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
+    ( (This)->lpVtbl -> QueryInterface(This,riid,ppvObject) ) 
 
 #define ISusie_AddRef(This)	\
-	( (This)->lpVtbl -> AddRef(This) ) 
+    ( (This)->lpVtbl -> AddRef(This) ) 
 
 #define ISusie_Release(This)	\
-	( (This)->lpVtbl -> Release(This) ) 
+    ( (This)->lpVtbl -> Release(This) ) 
 
 
 #define ISusie_Load(This,path)	\
-	( (This)->lpVtbl -> Load(This,path) ) 
+    ( (This)->lpVtbl -> Load(This,path) ) 
 
 #define ISusie_GetPluginInfo(This,infono,buf)	\
-	( (This)->lpVtbl -> GetPluginInfo(This,infono,buf) ) 
+    ( (This)->lpVtbl -> GetPluginInfo(This,infono,buf) ) 
+
+#define ISusie_IsSupportedStream(This,filename,stream)	\
+    ( (This)->lpVtbl -> IsSupportedStream(This,filename,stream) ) 
+
+#define ISusie_IsSupportedBuffer(This,filename,buffer)	\
+    ( (This)->lpVtbl -> IsSupportedBuffer(This,filename,buffer) ) 
 
 #endif /* COBJMACROS */
 

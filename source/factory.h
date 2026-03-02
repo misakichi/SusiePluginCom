@@ -6,7 +6,7 @@
 #include "combase.h"
 
 template<typename T> 
-class SusiePluginComGenericFactory : public ComBase<IClassFactory, void>
+class SusiePluginComGenericFactory : public ComBase<IClassFactory>
 {
 public:
 	HRESULT STDMETHODCALLTYPE CreateInstance(IUnknown* outer, REFIID riid, void** ppv) override

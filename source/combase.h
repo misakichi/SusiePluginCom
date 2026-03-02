@@ -3,12 +3,14 @@
 #define SUSIEPLUGINCOM_COM_BASE_H
 
 #include <type_traits>
+#include <Unknwn.h>
+
 /// <summary>
 /// QueryInterface, AddRef, Releaseを実装するCOMオブジェクトの基底クラス
 /// </summary>
 /// <typeparam name="T">実装クラス</typeparam>
 /// <typeparam name="I">継承インターフェース</typeparam>
-template<typename I, typename IDL_I>
+template<typename I>
 class ComBase : public I
 {
 public:
@@ -35,14 +37,7 @@ public:
 private:
 	BOOL CheckIID(REFIID riid)
 	{
-		if constexpr (std::is_same_v<void, IDL_I>)
-		{
-			return riid == __uuidof(I) || riid == IID_IUnknown;
-		}
-		else
-		{
-			return riid == __uuidof(I) || riid == __uuidof(IDL_I) || riid == IID_IUnknown;
-		}
+		return riid == __uuidof(I) || riid == IID_IUnknown;
 	}
 private:
 	LONG refCount_ = 1;

@@ -1,5 +1,4 @@
-﻿#include "SusiePluginCom.h"
-#include "factory.h"
+﻿#include "factory.h"
 #include "IfSpi.h"
 #include "SusiePluginCom_i.h"
 #include "olectl.h"

@@ -17,7 +17,9 @@ library SusiePluginCom
 	interface ISusie : IUnknown 
 	{
 		HRESULT Load([in] BSTR path);
-		HRESULT GetPluginInfo(int infono, [out, retval] BSTR* buf);
+		HRESULT GetPluginInfo([in] int infono, [out, retval] BSTR* buf);
+		HRESULT IsSupportedStream([in] BSTR filename, [in] IStream* stream);
+		HRESULT IsSupportedBuffer([in] BSTR filename, [in] SAFEARRAY(BYTE) buffer);
 	};
 
 	[
