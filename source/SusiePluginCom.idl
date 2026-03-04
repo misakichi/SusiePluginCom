@@ -8,6 +8,19 @@ library SusiePluginCom
 {
 	importlib("stdole2.tlb");
 
+	typedef struct _PictureInfo
+	{
+		__int32 left;
+		__int32 top;
+		__int32 width;
+		__int32 height;
+		WORD x_density;
+		WORD y_density;
+		short colorDepth;
+		short pd;
+		BSTR info;
+	} PictureInfo;
+
 	[
 		object,
 		uuid(35841F94-BF72-4EA7-92C0-439BF050556D), // IID
@@ -20,6 +33,7 @@ library SusiePluginCom
 		HRESULT GetPluginInfo([in] int infono, [out, retval] BSTR* buf);
 		HRESULT IsSupportedStream([in] BSTR filename, [in] IStream* stream);
 		HRESULT IsSupportedBuffer([in] BSTR filename, [in] SAFEARRAY(BYTE) buffer);
+		HRESULT GetPictureInfoFile([in] BSTR filename, [out] PictureInfo* info);
 	};
 
 	[

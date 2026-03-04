@@ -11,6 +11,7 @@ public:
 	HRESULT STDMETHODCALLTYPE GetPluginInfo(int infono, BSTR* buf) override;
 	HRESULT STDMETHODCALLTYPE IsSupportedStream(BSTR filename,  IStream* stream)override;
 	HRESULT STDMETHODCALLTYPE IsSupportedBuffer(BSTR filename,  SAFEARRAY* buffer)override;
+	HRESULT STDMETHODCALLTYPE GetPictureInfoFile(BSTR filename, PictureInfo* info) override;
 
 private:
 	HRESULT IsSupported(BSTR filename, void* buffer);

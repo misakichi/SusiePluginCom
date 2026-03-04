@@ -121,7 +121,21 @@ int main()
 				SysFreeString(bstrPath);
 				SafeArrayDestroy(array);
 			}
-
+			wprintf(L"GetPictureInfo test(file):\n");
+			for (auto checkPath : testFilePath)
+			{
+				auto path = SysAllocString(checkPath);
+				PictureInfo info;
+				plugin->GetPictureInfoFile(path, &info);
+				SysFreeString(path);
+				wprintf(L"GetPictureInfo:\n"
+					L" %ls\n"
+					L" lt(%d,%d) wh(%d,%d)\n"
+					L" colorDepth %d\n"
+					L" %ls\n"
+					, checkPath, info.left, info.top, info.width, info.height, info.colorDepth,
+					info.info ? info.info : L"");
+			}
 
 		}
 		plugin->Release();

@@ -82,6 +82,19 @@ extern "C"{
 /* library SusiePluginCom */
 /* [version][uuid] */ 
 
+typedef struct _PictureInfo
+    {
+    __int32 left;
+    __int32 top;
+    __int32 width;
+    __int32 height;
+    WORD x_density;
+    WORD y_density;
+    short colorDepth;
+    short pd;
+    BSTR info;
+    } 	PictureInfo;
+
 
 EXTERN_C const IID LIBID_SusiePluginCom;
 
@@ -114,6 +127,10 @@ EXTERN_C const IID IID_ISusie;
         virtual HRESULT STDMETHODCALLTYPE IsSupportedBuffer( 
             /* [in] */ BSTR filename,
             /* [in] */ SAFEARRAY * buffer) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetPictureInfoFile( 
+            /* [in] */ BSTR filename,
+            /* [out] */ PictureInfo *info) = 0;
         
     };
     
@@ -162,6 +179,12 @@ EXTERN_C const IID IID_ISusie;
             /* [in] */ BSTR filename,
             /* [in] */ SAFEARRAY * buffer);
         
+        DECLSPEC_XFGVIRT(ISusie, GetPictureInfoFile)
+        HRESULT ( STDMETHODCALLTYPE *GetPictureInfoFile )( 
+            ISusie * This,
+            /* [in] */ BSTR filename,
+            /* [out] */ PictureInfo *info);
+        
         END_INTERFACE
     } ISusieVtbl;
 
@@ -196,6 +219,9 @@ EXTERN_C const IID IID_ISusie;
 
 #define ISusie_IsSupportedBuffer(This,filename,buffer)	\
     ( (This)->lpVtbl -> IsSupportedBuffer(This,filename,buffer) ) 
+
+#define ISusie_GetPictureInfoFile(This,filename,info)	\
+    ( (This)->lpVtbl -> GetPictureInfoFile(This,filename,info) ) 
 
 #endif /* COBJMACROS */
 
