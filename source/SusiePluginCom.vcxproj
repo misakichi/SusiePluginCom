@@ -28,6 +28,7 @@
     <ClInclude Include="combase.h" />
     <ClInclude Include="factory.h" />
     <ClInclude Include="IfSpi.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SusiePluginCom_i.h" />
   </ItemGroup>
   <ItemGroup>
@@ -35,6 +36,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="SusiePluginCom.def" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="SusiePluginCom.rc" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>18.0</VCProjectVersion>
