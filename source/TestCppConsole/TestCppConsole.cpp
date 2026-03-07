@@ -10,11 +10,7 @@
 
 #include <atlbase.h>
 
-#if 0//def _M_IX86
-constexpr auto CLCTX_SERVER_TYPE = CLSCTX_INPROC_SERVER;
-#else
 constexpr auto CLCTX_SERVER_TYPE = CLSCTX_LOCAL_SERVER | CLSCTX_INPROC_SERVER;
-#endif
 
 HRESULT DllRegisterServer_NoInProcServer();
 
@@ -44,19 +40,24 @@ static SAFEARRAY* LoadFileToSafeArray(const wchar_t* filePath, size_t bufferSize
 
 int main()
 {
-	if(FAILED(DllRegisterServer_NoInProcServer()))
-	{
-		printf("Failed to register COM server.\n");
-	}
+	//if(FAILED(DllRegisterServer_NoInProcServer()))
+	//{
+	//	printf("Failed to register COM server.\n");
+	//}
 	if (FAILED(CoInitialize(nullptr)))
 	{
 		printf("Failed to initialize COM library.\n");
 		return 1;
 	}	
 
+	HRESULT hr;
+
+	ISharedMemory* sharedMemory = nullptr;
+	hr = CoCreateInstance(CLSID_SharedMemory, nullptr, CLCTX_SERVER_TYPE, IID_PPV_ARGS(&sharedMemory));
+
 	ISusie* plugin = nullptr;
 	
-	auto hr = CoCreateInstance(CLSID_SusieWrapper, nullptr, CLCTX_SERVER_TYPE, IID_PPV_ARGS(&plugin));
+	hr = CoCreateInstance(CLSID_SusieWrapper, nullptr, CLCTX_SERVER_TYPE, IID_PPV_ARGS(&plugin));
 	if(SUCCEEDED(hr) && plugin)
 	{
 		printf("Plugin interface create successfully.\n");
@@ -136,6 +137,31 @@ int main()
 					, checkPath, info.left, info.top, info.width, info.height, info.colorDepth,
 					info.info ? info.info : L"");
 			}
+			wprintf(L"GetPicture test(file):\n");
+			for (auto checkPath : testFilePath)
+			{
+				auto path = SysAllocString(checkPath);
+				ISharedMemory* info;
+				ISharedMemory* bmp;
+				if (FAILED(hr = plugin->GetPictureFile(path, &info, &bmp)))
+				{
+					SysFreeString(path);
+					wprintf(L"GetPictureFile: %ls error.\n", checkPath);
+					continue;
+				}
+				BYTE* pInfo;
+				DWORD infoSize;
+				BYTE* pBmp;
+				DWORD bmpSize;
+				info->GetBuffer(&pInfo, &infoSize);
+				bmp->GetBuffer(&pBmp, &bmpSize);
+				BITMAPINFO* bmpInfo = (BITMAPINFO*)pInfo;
+				SysFreeString(path);
+				info->Release();
+				bmp->Release();
+				wprintf(L"GetPictureFile: %ls success.\n", checkPath);
+			}
+
 
 		}
 		plugin->Release();

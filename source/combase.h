@@ -14,6 +14,7 @@ template<typename I>
 class ComBase : public I
 {
 public:
+	virtual ~ComBase() {}
 	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppv) override
 	{
 		if (CheckIID(riid))
@@ -35,12 +36,14 @@ public:
 	}
 
 private:
+	static constexpr IID BaseIID = __uuidof(I);
 	BOOL CheckIID(REFIID riid)
 	{
-		return riid == __uuidof(I) || riid == IID_IUnknown;
+
+		return riid == BaseIID || riid == IID_IUnknown;
 	}
 private:
-	LONG refCount_ = 1;
+	LONG refCount_ = 0;
 };
 
 #endif // SUSIEPLUGINCOM_COM_BASE_H

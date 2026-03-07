@@ -14,9 +14,12 @@ public:
 		if (outer)
 			return CLASS_E_NOAGGREGATION;
 		auto obj = new T();
-		return obj->QueryInterface(riid, ppv);
+		auto ret = obj->QueryInterface(riid, ppv);
+		return ret;
 	}
 
+	ULONG STDMETHODCALLTYPE AddRef() override { return 1; }
+	ULONG STDMETHODCALLTYPE Release() override { return 1; }
 
 	HRESULT STDMETHODCALLTYPE LockServer(BOOL) override { return S_OK; }
 };

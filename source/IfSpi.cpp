@@ -1,5 +1,11 @@
 ﻿#include "IfSpi.h"
+#include "SharedMemory.h"
+#include "factory.h"
 #include <string>
+
+#if defined(_M_IX86)
+extern SusiePluginComGenericFactory<SusiePluginIF> spFactory;
+extern SusiePluginComGenericFactory<SharedMemory> smFactory;
 
 #pragma pack(push,1)
 struct SusiePictureInfo
@@ -22,6 +28,10 @@ struct SPIFunc
 	using IsSupportedFuncWProc = int(WINAPI*)(LPCWSTR filename, DWORD dw);
 	using GetPictureInfoFuncProc = int(WINAPI*)(LPCSTR filename, long len, DWORD flag, SusiePictureInfo* lpInfo);
 	using GetPictureInfoFuncWProc = int(WINAPI*)(LPCWSTR filename, long len, DWORD flag, SusiePictureInfo* lpInfo);
+	using GetPictureFuncProc = int(WINAPI*)(LPCSTR filename, long len, DWORD flag, HANDLE* pHBInof, HANDLE* phBmp, FARPROC progressCB, long lData);
+	using GetPictureFuncWProc = int(WINAPI*)(LPCWSTR filename, long len, DWORD flag, HANDLE* pHBInof, HANDLE* phBmp, FARPROC progressCB, long lData);
+	using GetPreviewFuncProc = int(WINAPI*)(LPCSTR filename, long len, DWORD flag, HANDLE* pHBInof, HANDLE* phBmp, FARPROC progressCB, long lData);
+	using GetPreviewFuncWProc = int(WINAPI*)(LPCWSTR filename, long len, DWORD flag, HANDLE* pHBInof, HANDLE* phBmp, FARPROC progressCB, long lData);
 
 	GetPluginInfoFuncProc GetPluginInfo;
 	GetPluginInfoFuncWProc GetPluginInfoW;
@@ -29,6 +39,10 @@ struct SPIFunc
 	IsSupportedFuncWProc IsSupportedW;
 	GetPictureInfoFuncProc GetPictureInfo;
 	GetPictureInfoFuncWProc GetPictureInfoW;
+	GetPictureFuncProc GetPicture;
+	GetPictureFuncWProc GetPictureW;
+	GetPreviewFuncProc GetPreview;
+	GetPreviewFuncWProc GetPreviewW;
 };
 #define IS_FUNC_LOADED(_func, funcname)	(_func->funcname || _func->funcname ## W)
 #define LOAD_FUNC_USESTR(_funcs, funcname) \
@@ -56,6 +70,15 @@ static BSTR strToBstr(const char* str)
 	return SysAllocString(wstr.c_str());
 }
 
+SusiePluginIF::~SusiePluginIF()
+{
+	FinishGetPicture();
+	if (hModule_)
+		FreeLibrary(hModule_);
+	if (spiFuncs_)
+		delete spiFuncs_;
+}
+
 HRESULT SusiePluginIF::Load(BSTR path) 
 {
 	hModule_ = LoadLibraryW(path);
@@ -69,6 +92,8 @@ HRESULT SusiePluginIF::Load(BSTR path)
 		LOAD_FUNC_USESTR(spiFuncs_, GetPluginInfo);
 		LOAD_FUNC_USESTR(spiFuncs_, IsSupported);
 		LOAD_FUNC_USESTR(spiFuncs_, GetPictureInfo);
+		LOAD_FUNC_USESTR(spiFuncs_, GetPicture);
+		LOAD_FUNC_USESTR(spiFuncs_, GetPreview);
 		funcloadComplete = true;
 	} while (0);
 
@@ -238,3 +263,205 @@ HRESULT STDMETHODCALLTYPE SusiePluginIF::GetPictureInfoFile(BSTR filename, Pictu
 	}
 	return ret==0 ? S_OK : HRESULT_FROM_WIN32(ret);
 }
+
+/// <summary>
+/// 画像展開
+/// </summary>
+/// <param name="filename"></param>
+/// <param name="info"></param>
+/// <param name="bmp"></param>
+/// <returns></returns>
+HRESULT STDMETHODCALLTYPE SusiePluginIF::GetPictureFile(BSTR filename, ISharedMemory** info, ISharedMemory** bmp)
+{
+	if (hModule_ == nullptr)
+		return CO_E_NOTINITIALIZED;
+	if (info == nullptr)
+		return E_POINTER;
+	if (bmp == nullptr)
+		return E_POINTER;
+
+	SusiePictureInfo spiInfo = {};
+	int ret = 0;
+	HANDLE hInfo, hBmp;
+	if (spiFuncs_->GetPicture)
+	{
+		std::string str = bstrToStr(filename);
+		ret = spiFuncs_->GetPicture(str.c_str(), 0, 0, &hInfo, &hBmp, nullptr, 0);
+	}
+	else if (spiFuncs_->GetPictureW)
+	{
+		ret = spiFuncs_->GetPictureW(filename, 0, 0, &hInfo, &hBmp, nullptr, 0);
+	}
+	else
+		return E_NOTIMPL;
+
+	HRESULT hr;
+	if (FAILED(hr = SpiErrorToHResult(ret)))
+		return HRESULT_FROM_WIN32(ret);
+
+	hr = PictureLocalMemToSharedMemory(hInfo, hBmp, info, bmp);
+	LocalFree(hInfo);
+	LocalFree(hBmp);
+	return hr;
+}
+
+/// <summary>
+/// プレビュー画像展開
+/// </summary>
+/// <param name="filename"></param>
+/// <param name="info"></param>
+/// <param name="bmp"></param>
+/// <returns></returns>
+HRESULT STDMETHODCALLTYPE SusiePluginIF::GetPreviewFile(BSTR filename, ISharedMemory** info, ISharedMemory** bmp)
+{
+	if (hModule_ == nullptr)
+		return CO_E_NOTINITIALIZED;
+	if (info == nullptr)
+		return E_POINTER;
+	if (bmp == nullptr)
+		return E_POINTER;
+
+	return S_OK;
+
+	SusiePictureInfo spiInfo = {};
+	int ret = 0;
+	HANDLE hInfo, hBmp;
+	if (spiFuncs_->GetPreview)
+	{
+		std::string str = bstrToStr(filename);
+		ret = spiFuncs_->GetPreview(str.c_str(), 0, 0, &hInfo, &hBmp, nullptr, 0);
+	}
+	else if (spiFuncs_->GetPreviewW)
+	{
+		ret = spiFuncs_->GetPreviewW(filename, 0, 0, &hInfo, &hBmp, nullptr, 0);
+	}
+	else
+		return E_NOTIMPL;
+
+	HRESULT hr;
+	if (FAILED(hr= SpiErrorToHResult(ret)))
+		return HRESULT_FROM_WIN32(ret);
+
+	hr = PictureLocalMemToSharedMemory(hInfo, hBmp, info, bmp);
+	LocalFree(hInfo);
+	LocalFree(hBmp);
+	return hr;
+}
+
+/// <summary>
+/// LocalAllocで確保されたメモリを元に共有メモリオブジェクトを作成する
+/// </summary>
+/// <param name="hInfo"></param>
+/// <param name="hBmp"></param>
+/// <param name="info"></param>
+/// <param name="bmp"></param>
+/// <returns></returns>
+HRESULT SusiePluginIF::PictureLocalMemToSharedMemory(HLOCAL hInfo, HLOCAL hBmp, ISharedMemory** info, ISharedMemory** bmp)
+{
+	HRESULT hr;
+	// 受け取ったハンドルを元に共有メモリオブジェクトを作成
+	ISharedMemory* infoObj = nullptr;
+	ISharedMemory* bmpObj = nullptr;
+	do
+	{
+		auto handleToSharedMemory = [](HANDLE h, ISharedMemory** memory) -> HRESULT
+			{
+				if (memory == nullptr)
+					return E_POINTER;
+
+				ISharedMemory* obj = nullptr;
+				HRESULT hr;
+				if (FAILED(hr = smFactory.CreateInstance(nullptr, IID_PPV_ARGS(&obj))))
+					return hr;
+
+				if (FAILED(hr = obj->CreateBuffer(LocalSize(h))))
+					return hr;
+
+				DWORD size;
+				BYTE* buffer;
+				if (FAILED(hr = obj->GetBuffer(&buffer, &size)))
+				{
+					obj->Release();
+					return hr;
+				}
+				if(buffer==nullptr)
+				{
+					obj->Release();
+					return E_FAIL;
+				}
+				auto infoAddr = LocalLock(h);
+				if (infoAddr == nullptr)
+				{
+					obj->Release();
+					return HRESULT_FROM_WIN32(GetLastError());
+				}
+				memcpy(buffer, infoAddr, size);
+				LocalUnlock(h);
+				*memory = obj;
+				return S_OK;
+			};
+		if (FAILED(hr = handleToSharedMemory(hInfo, &infoObj)))
+			break;
+		if (FAILED(hr = handleToSharedMemory(hBmp, &bmpObj)))
+			break;
+
+	} while (0);
+
+	if (FAILED(hr))
+	{
+		if (infoObj)
+			infoObj->Release();
+		if (bmpObj)
+			bmpObj->Release();
+		return hr;
+	}
+
+	FinishGetPicture();
+	currentInfoMemory_ = *info = infoObj;
+	currentBmpMemory_ = *bmp = bmpObj;
+
+	currentInfoMemory_->AddRef();
+	currentBmpMemory_->AddRef();
+
+	return S_OK;
+}
+HRESULT STDMETHODCALLTYPE SusiePluginIF::FinishGetPicture(void)
+{
+	if (currentInfoMemory_)
+		currentInfoMemory_->Release();
+	if (currentBmpMemory_)
+		currentBmpMemory_->Release();
+	currentInfoMemory_ = nullptr;
+	currentBmpMemory_ = nullptr;
+	return S_OK;
+}
+
+HRESULT SusiePluginIF::SpiErrorToHResult(int spiRet)
+{
+	switch (spiRet)
+	{
+	case -1:
+		return E_NOTIMPL;
+	case 0:
+		return S_OK;
+	case 1:
+		return E_ABORT;
+	case 2:
+		return HRESULT_FROM_WIN32(ERROR_UNSUPPORTED_TYPE);
+	case 3:
+		return HRESULT_FROM_WIN32(ERROR_INVALID_DATA);
+	case 4:
+		return HRESULT_FROM_WIN32(ERROR_OUTOFMEMORY);
+	case 5:
+		return HRESULT_FROM_WIN32(ERROR_NOT_ENOUGH_MEMORY);
+	case 6:
+		return HRESULT_FROM_WIN32(ERROR_READ_FAULT);
+	case 7:
+		return E_NOTIMPL;
+	case 8:
+		return E_UNEXPECTED;
+	default:
+		return E_FAIL;
+	}
+}
+#endif

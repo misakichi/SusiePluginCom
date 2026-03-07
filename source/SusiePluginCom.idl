@@ -8,6 +8,26 @@ library SusiePluginCom
 {
 	importlib("stdole2.tlb");
 
+	[
+		object,
+		uuid(F21BEE2A-8187-4FC8-A252-5F3F5FBCEBF8),
+		pointer_default(unique),
+	] interface ISharedMemory : IUnknown
+	{
+		HRESULT CreateBuffer([in] DWORD size);
+		HRESULT GetBuffer([out] BYTE** buffer, [out] DWORD* size);
+		HRESULT Lock();
+		HRESULT Unlock();
+	};
+
+	[
+		uuid(CB2B781F-9D33-45DA-9E55-EE9419494BFF) // CLSID
+	]
+	coclass SharedMemory
+	{
+		[default] interface ISusie;
+	};
+
 	typedef struct _PictureInfo
 	{
 		__int32 left;
@@ -23,7 +43,7 @@ library SusiePluginCom
 
 	[
 		object,
-		uuid(35841F94-BF72-4EA7-92C0-439BF050556D), // IID
+		uuid(35841F94-BF72-4EA7-92C0-439BF050556D),
 		pointer_default(unique),
 		oleautomation
 	]
@@ -33,7 +53,18 @@ library SusiePluginCom
 		HRESULT GetPluginInfo([in] int infono, [out, retval] BSTR* buf);
 		HRESULT IsSupportedStream([in] BSTR filename, [in] IStream* stream);
 		HRESULT IsSupportedBuffer([in] BSTR filename, [in] SAFEARRAY(BYTE) buffer);
+
 		HRESULT GetPictureInfoFile([in] BSTR filename, [out] PictureInfo* info);
+		HRESULT GetPictureFile([in] BSTR filename, [out] ISharedMemory** info, [out] ISharedMemory** bmp);
+		HRESULT GetPreviewFile([in] BSTR filename, [out] ISharedMemory** info, [out] ISharedMemory** bmp);
+
+		/// <summary>
+		/// GetPictureFileやGetPreviewFileのあとにできるだけ早く呼び出すこと、維持した共有メモリの解放を促す
+		/// 呼ばない場合は次のGetPictureFileやGetPreviewFileが呼ばれるまで共有メモリが解放されない可能性がある
+		/// </summary>
+		/// <returns></returns>
+		HRESULT FinishGetPicture();
+
 	};
 
 	[

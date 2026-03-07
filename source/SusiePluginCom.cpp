@@ -1,15 +1,26 @@
 ﻿#include "factory.h"
+#if defined(_M_IX86)
 #include "IfSpi.h"
+#endif
+#include "SharedMemory.h"
 #include "SusiePluginCom_i.h"
 #include "olectl.h"
 #include <strsafe.h>
 
+#if defined(_M_IX86)
+SusiePluginComGenericFactory<SusiePluginIF> spFactory;
+#endif
+SusiePluginComGenericFactory<SharedMemory> smFactory;
+
 HRESULT __stdcall DllGetClassObject(REFCLSID clsid, REFIID riid, void** ppv) 
 {
-
+#if defined(_M_IX86)
 	if (clsid == CLSID_SusieWrapper) {
-		static SusiePluginComGenericFactory<SusiePluginIF> factory;
-		return factory.QueryInterface(riid, ppv);
+		return spFactory.QueryInterface(riid, ppv);
+	}
+#endif
+	if (clsid == CLSID_SharedMemory) {
+		return smFactory.QueryInterface(riid, ppv);
 	}
 	return CLASS_E_CLASSNOTAVAILABLE;
 }
@@ -37,9 +48,20 @@ HRESULT RegisterKey(HKEY root, const wchar_t* path, const wchar_t* value)
 }
 
 // 登録する CLSID 群
-static const GUID s_CLSIDs[] =
+struct CLSIDInfo
 {
-	CLSID_SusieWrapper,
+	const CLSID clsid;
+	bool isServer;//trueならサーバーになれるものとして登録（InprocServer/InprocServer32）
+	const wchar_t* description;
+};
+static const CLSIDInfo s_CLSIDs[] =
+{
+	{ CLSID_SharedMemory,true, L"PiViLity SharedMemory"},
+#if defined(_M_IX86)
+	{ CLSID_SusieWrapper,true, L"PiViLity SusiePluginWrapper" },
+#else
+	{ CLSID_SusieWrapper,false, L"PiViLity SusiePluginWrapper" },
+#endif
 };
 
 HRESULT RegSetKeyValueW_HR(
@@ -83,15 +105,15 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 		StringCchPrintfW(appidKey, 256, L"AppID\\%s", appGuidStr);
 
 
-		if (FAILED(hr = RegisterKey(HKEY_CLASSES_ROOT, appidKey, L"SusiePluginCom")))
+		if (FAILED(hr = RegisterKey(HKEY_CLASSES_ROOT, appidKey, L"PiViLity SusiePluginCom")))
 			break;
 		RegSetKeyValueW_HR(HKEY_CLASSES_ROOT, appidKey, L"DllSurrogate", REG_SZ, L"", sizeof(wchar_t));
 
 		// CLSID ごとに登録
-		for (auto& clsid : s_CLSIDs)
+		for (auto& cls : s_CLSIDs)
 		{
 			wchar_t guidStr[128];
-			auto ret = StringFromGUID2(clsid, guidStr, _countof(guidStr));
+			auto ret = StringFromGUID2(cls.clsid, guidStr, _countof(guidStr));
 			if (ret <= 0)
 			{
 				hr = HRESULT_FROM_WIN32(ERROR_OUTOFMEMORY);
@@ -104,18 +126,24 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 			if (FAILED(hr = RegisterKey(HKEY_CLASSES_ROOT, clsidKey, L"SusiePluginCom")))
 				break;
 
-			// CLSID\{GUID}\InprocServer32
-			wchar_t inprocKey[256];
-			StringCchPrintfW(inprocKey, 256, L"%s\\InprocServer32", clsidKey);
-
-			if (FAILED(hr = RegisterKey(HKEY_CLASSES_ROOT, inprocKey, modulePath)))
-				break;
-			if (FAILED(hr = RegSetKeyValueW_HR(HKEY_CLASSES_ROOT, inprocKey, L"ThreadingModel", REG_SZ, L"Both", sizeof(L"Both"))))
-				break;
-
 			// CLSID に AppID を紐付け
 			if (FAILED(hr = RegSetKeyValueW_HR(HKEY_CLASSES_ROOT, clsidKey, L"AppID", REG_SZ, appGuidStr, (DWORD)((wcslen(appGuidStr) + 1) * sizeof(wchar_t)))))
 				break;
+
+			// CLSID\{GUID}\InprocServer32
+			if (cls.isServer)
+			{
+				wchar_t inprocKey[256];
+#if defined(_M_IX86)
+				StringCchPrintfW(inprocKey, 256, L"%s\\InprocServer32", clsidKey);
+#else
+				StringCchPrintfW(inprocKey, 256, L"%s\\InprocServer64", clsidKey);
+#endif
+				if (FAILED(hr = RegisterKey(HKEY_CLASSES_ROOT, inprocKey, modulePath)))
+					break;
+				if (FAILED(hr = RegSetKeyValueW_HR(HKEY_CLASSES_ROOT, inprocKey, L"ThreadingModel", REG_SZ, L"Both", sizeof(L"Both"))))
+					break;
+			}
 
 		}
 		wchar_t* lastDirSplt = modulePath;
@@ -125,7 +153,11 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 			search++;
 			lastDirSplt = search;
 		}
+#if defined(_M_IX86)
+		wcscpy_s(lastDirSplt, MAX_PATH - (lastDirSplt - modulePath), L"SusiePluginCom32.tlb");
+#else
 		wcscpy_s(lastDirSplt, MAX_PATH - (lastDirSplt - modulePath), L"SusiePluginCom.tlb");
+#endif
 		ITypeLib* pTypeLib = nullptr;
 		if (FAILED(hr = LoadTypeLibEx(modulePath, REGKIND_REGISTER, &pTypeLib)))
 			break;
@@ -145,10 +177,10 @@ extern "C" HRESULT __stdcall DllUnregisterServer()
 	HRESULT hrRet = S_OK;
 	wchar_t guidStr[64];
 	// CLSID ごとに登録
-	for (auto& clsid : s_CLSIDs)
+	for (auto& cls : s_CLSIDs)
 	{
 		wchar_t clsidKey[256];
-		if (StringFromGUID2(clsid, guidStr, 64) == 0)
+		if (StringFromGUID2(cls.clsid, guidStr, 64) == 0)
 			hrRet = HRESULT_FROM_WIN32(ERROR_OUTOFMEMORY);
 		if(FAILED(hr=StringCchPrintfW(clsidKey, 256, L"CLSID\\%s", guidStr)))
 			hrRet = hr;

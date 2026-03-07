@@ -4,7 +4,5 @@
     <Platform Name="x86" />
   </Configurations>
   <Project Path="TestCppConsole/TestCppConsole.vcxproj" Id="08d1b7a8-341d-42de-8bca-b717eb01cddb" />
-  <Project Path="SusiePluginCom.vcxproj">
-    <Platform Solution="Debug|x64" Project="Win32" />
-  </Project>
+  <Project Path="SusiePluginCom.vcxproj" />
 </Solution>
