@@ -15,3 +15,7 @@
 /source/Debug
 /source/Release
 *.user
+/source/SusiePluginCom/x64
+/source/TestCppConsole/Release
+/source/TestCppConsole/x64/Release
+/source/x64/Release
