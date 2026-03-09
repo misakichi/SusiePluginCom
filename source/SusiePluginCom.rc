@@ -68,12 +68,12 @@ BEGIN
     BEGIN
         BLOCK "041104b0"
         BEGIN
-            VALUE "FileDescription", "SusiePlugin Com wrapper."
+            VALUE "FileDescription", "PiviLity SusiePlugin Com wrapper."
             VALUE "FileVersion", "0.0.1.1"
             VALUE "InternalName", "SusiePluginCom.dll"
-            VALUE "LegalCopyright", "Copyright (C) 2026, misakichi kaminagare（神流みさきち）"
+            VALUE "LegalCopyright", "Copyright (c) 2026 misakichi kaminagare（神流みさきち）"
             VALUE "OriginalFilename", "SusiePluginCom.dll"
-            VALUE "ProductName", "SusiePluginCom"
+            VALUE "ProductName", "PiViLity Susie Plugin Wrapper"
             VALUE "ProductVersion", "0.0.1.1"
         END
     END
