@@ -61,11 +61,18 @@ int main()
 	if(SUCCEEDED(hr) && plugin)
 	{
 		printf("Plugin interface create successfully.\n");
+#define GIF_TEST
+#ifndef GIF_TEST
 		if(FAILED(hr = plugin->Load(SysAllocString(L"C:\\projects\\SusiePluginCom\\source\\Debug\\ifjpeg.spi"))))
 		{
 			printf("Failed to load SPI.\n");
 		}
-		else
+#else
+		if(FAILED(hr = plugin->Load(SysAllocString(L"C:\\projects\\SusiePluginCom\\source\\Debug\\ifgif.spi"))))
+		{
+			printf("Failed to load SPI.\n");
+		}
+#endif
 		{
 			BSTR info;
 			int infono = 0;
@@ -86,10 +93,14 @@ int main()
 
 			const wchar_t* testFilePath[] =
 			{
+#ifdef GIF_TEST
+				L"D:\\#######\\usb16\\痴漢男\\1_11.gif",
+#else
 				L"C:\\projects\\SusiePluginCom\\source\\Debug\\DSC_0696.jpg",
 				L"C:\\projects\\SusiePluginCom\\source\\Debug\\DSC_0697.jpg",
 				L"C:\\projects\\SusiePluginCom\\source\\Debug\\DSC_0698.jpg",
 				L"C:\\projects\\SusiePluginCom\\source\\Debug\\pngnow.png",
+#endif
 			};
 			wprintf(L"IsSupportedStream test(Stream):\n");
 			for (auto checkPath : testFilePath)

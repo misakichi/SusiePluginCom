@@ -185,8 +185,7 @@
       </TypeLibraryFile>
     </Link>
     <PostBuildEvent>
-      <Command>
-      </Command>
+      <Command>%systemroot%\SysWoW64\regsvr32.exe $(TargetPath)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

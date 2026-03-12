@@ -143,6 +143,11 @@ EXTERN_C const IID IID_ISharedMemory;
         
         virtual HRESULT STDMETHODCALLTYPE Unlock( void) = 0;
         
+        virtual HRESULT STDMETHODCALLTYPE GetPathName( 
+            /* [retval][out] */ BSTR *path) = 0;
+        
+        virtual HANDLE STDMETHODCALLTYPE GetHandle( void) = 0;
+        
     };
     
     
@@ -186,6 +191,15 @@ EXTERN_C const IID IID_ISharedMemory;
         HRESULT ( STDMETHODCALLTYPE *Unlock )( 
             ISharedMemory * This);
         
+        DECLSPEC_XFGVIRT(ISharedMemory, GetPathName)
+        HRESULT ( STDMETHODCALLTYPE *GetPathName )( 
+            ISharedMemory * This,
+            /* [retval][out] */ BSTR *path);
+        
+        DECLSPEC_XFGVIRT(ISharedMemory, GetHandle)
+        HANDLE ( STDMETHODCALLTYPE *GetHandle )( 
+            ISharedMemory * This);
+        
         END_INTERFACE
     } ISharedMemoryVtbl;
 
@@ -220,6 +234,12 @@ EXTERN_C const IID IID_ISharedMemory;
 
 #define ISharedMemory_Unlock(This)	\
     ( (This)->lpVtbl -> Unlock(This) ) 
+
+#define ISharedMemory_GetPathName(This,path)	\
+    ( (This)->lpVtbl -> GetPathName(This,path) ) 
+
+#define ISharedMemory_GetHandle(This)	\
+    ( (This)->lpVtbl -> GetHandle(This) ) 
 
 #endif /* COBJMACROS */
 

@@ -348,6 +348,43 @@ HRESULT STDMETHODCALLTYPE SusiePluginIF::GetPreviewFile(BSTR filename, ISharedMe
 	return hr;
 }
 
+static auto handleToSharedMemory(HANDLE h, ISharedMemory** memory) -> HRESULT
+{
+	if (memory == nullptr)
+		return E_POINTER;
+
+	ISharedMemory* obj = nullptr;
+	HRESULT hr;
+	if (FAILED(hr = smFactory.CreateInstance(nullptr, IID_PPV_ARGS(&obj))))
+		return hr;
+
+	if (FAILED(hr = obj->CreateBuffer(LocalSize(h))))
+		return hr;
+
+	DWORD size;
+	BYTE* buffer;
+	if (FAILED(hr = obj->GetBuffer(&buffer, &size)))
+	{
+		obj->Release();
+		return hr;
+	}
+	if (buffer == nullptr)
+	{
+		obj->Release();
+		return E_FAIL;
+	}
+	auto infoAddr = LocalLock(h);
+	if (infoAddr == nullptr)
+	{
+		obj->Release();
+		return HRESULT_FROM_WIN32(GetLastError());
+	}
+	memcpy(buffer, infoAddr, size);
+	LocalUnlock(h);
+	*memory = obj;
+	return S_OK;
+}
+
 /// <summary>
 /// LocalAllocで確保されたメモリを元に共有メモリオブジェクトを作成する
 /// </summary>
@@ -364,42 +401,7 @@ HRESULT SusiePluginIF::PictureLocalMemToSharedMemory(HLOCAL hInfo, HLOCAL hBmp, 
 	ISharedMemory* bmpObj = nullptr;
 	do
 	{
-		auto handleToSharedMemory = [](HANDLE h, ISharedMemory** memory) -> HRESULT
-			{
-				if (memory == nullptr)
-					return E_POINTER;
 
-				ISharedMemory* obj = nullptr;
-				HRESULT hr;
-				if (FAILED(hr = smFactory.CreateInstance(nullptr, IID_PPV_ARGS(&obj))))
-					return hr;
-
-				if (FAILED(hr = obj->CreateBuffer(LocalSize(h))))
-					return hr;
-
-				DWORD size;
-				BYTE* buffer;
-				if (FAILED(hr = obj->GetBuffer(&buffer, &size)))
-				{
-					obj->Release();
-					return hr;
-				}
-				if(buffer==nullptr)
-				{
-					obj->Release();
-					return E_FAIL;
-				}
-				auto infoAddr = LocalLock(h);
-				if (infoAddr == nullptr)
-				{
-					obj->Release();
-					return HRESULT_FROM_WIN32(GetLastError());
-				}
-				memcpy(buffer, infoAddr, size);
-				LocalUnlock(h);
-				*memory = obj;
-				return S_OK;
-			};
 		if (FAILED(hr = handleToSharedMemory(hInfo, &infoObj)))
 			break;
 		if (FAILED(hr = handleToSharedMemory(hBmp, &bmpObj)))

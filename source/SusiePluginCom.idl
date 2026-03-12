@@ -18,6 +18,8 @@ library SusiePluginCom
 		HRESULT GetBuffer([out] BYTE** buffer, [out] DWORD* size);
 		HRESULT Lock();
 		HRESULT Unlock();
+		HRESULT GetPathName([out, retval]BSTR* path);
+		HANDLE GetHandle();
 	};
 
 	[
@@ -25,7 +27,7 @@ library SusiePluginCom
 	]
 	coclass SharedMemory
 	{
-		[default] interface ISusie;
+		[default] interface ISharedMemory;
 	};
 
 	typedef struct _PictureInfo
