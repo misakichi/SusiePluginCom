@@ -37,7 +37,7 @@ SharedMemory::NamedOsObject::~NamedOsObject()
 /// <param name="createFunc"></param>
 /// <param name="object"></param>
 /// <returns></returns>
-HRESULT SharedMemory::CreateNamedObject(const char* prefix, uint32_t& idGenerater, std::function<HANDLE(const char*)> createFunc, NamedOsObject** object)
+HRESULT SharedMemory::CreateNamedObject(const wchar_t* prefix, uint32_t& idGenerater, std::function<HANDLE(const wchar_t*)> createFunc, NamedOsObject** object)
 {
 	if (object == nullptr)
 		return E_POINTER;
@@ -47,7 +47,7 @@ HRESULT SharedMemory::CreateNamedObject(const char* prefix, uint32_t& idGenerate
 	while (1)
 	{
 		id = InterlockedIncrement(&idGenerater);
-		auto name = prefix + std::to_string(id);
+		auto name = prefix + std::to_wstring(id);
 		handle = createFunc(name.c_str());
 		if (handle == nullptr)
 		{
@@ -78,12 +78,12 @@ HRESULT STDMETHODCALLTYPE SharedMemory::CreateBuffer(DWORD size)
 	HRESULT hr = S_OK;
 	do
 	{
-		if(FAILED(hr=CreateNamedObject(MappedFileGUID, s_FileID, [size](const char* name) {
-			return CreateFileMappingA(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, size, name);
+		if(FAILED(hr=CreateNamedObject(MappedFileGUID, s_FileID, [size](const wchar_t* name) {
+			return CreateFileMappingW(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, size, name);
 			}, & mapFileObject)))
 			break;
-		if (FAILED(hr = CreateNamedObject(MutexGUID, s_MutexID, [](const char* name) {
-				return CreateMutexA(NULL, FALSE, name);
+		if (FAILED(hr = CreateNamedObject(MutexGUID, s_MutexID, [](const wchar_t* name) {
+				return CreateMutexW(NULL, FALSE, name);
 			}, &mutexObject)))
 			break;
 		
@@ -163,6 +163,15 @@ HRESULT STDMETHODCALLTYPE SharedMemory::Unlock(void)
 	return HRESULT_FROM_WIN32(ReleaseMutex(mutex_->handle));
 }
 
+HRESULT STDMETHODCALLTYPE SharedMemory::GetPathName(BSTR* path)
+{
+	auto bstr = SysAllocString((MappedFileGUID + std::to_wstring(mapFile_->id)).c_str());
+	if(bstr==nullptr)
+		return HRESULT_FROM_WIN32(ERROR_NOT_ENOUGH_MEMORY);
+	*path = bstr;
+	return S_OK;
+}
+
 // IMarshal の実装
 
 /// <summary>
@@ -210,13 +219,13 @@ HRESULT STDMETHODCALLTYPE SharedMemory::UnmarshalInterface(IStream* pStm, REFIID
 	HRESULT hr = S_OK;
 	do
 	{
-		hMapFile = OpenFileMappingA(FILE_MAP_ALL_ACCESS, FALSE, (MappedFileGUID + std::to_string(mapFileId)).c_str());
+		hMapFile = OpenFileMappingW(FILE_MAP_ALL_ACCESS, FALSE, (MappedFileGUID + std::to_wstring(mapFileId)).c_str());
 		if (hMapFile == nullptr)
 		{
 			hr = HRESULT_FROM_WIN32(GetLastError());
 			break;
 		}
-		hMutex = OpenMutexA(SYNCHRONIZE, FALSE, (MutexGUID + std::to_string(mutexId)).c_str());
+		hMutex = OpenMutexW(SYNCHRONIZE, FALSE, (MutexGUID + std::to_wstring(mutexId)).c_str());
 		if (hMutex == nullptr)
 		{
 			hr = HRESULT_FROM_WIN32(GetLastError());

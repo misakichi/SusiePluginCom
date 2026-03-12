@@ -29,6 +29,8 @@ public:
 	HRESULT STDMETHODCALLTYPE GetBuffer(BYTE** buffer, DWORD* size) override;
 	HRESULT STDMETHODCALLTYPE Lock(void) override;
 	HRESULT STDMETHODCALLTYPE Unlock(void) override;
+	HANDLE STDMETHODCALLTYPE GetHandle() override { return mapFile_ ? mapFile_->handle : NULL; }
+	HRESULT STDMETHODCALLTYPE GetPathName(BSTR* path) override;
 
 	// IMarshal の実装
 	HRESULT STDMETHODCALLTYPE GetUnmarshalClass(REFIID riid, void* pv, DWORD dwDestContext, void* pvDestContext, DWORD mshlflags, CLSID* pCid) override;
@@ -48,14 +50,14 @@ private:
 	};
 
 	void Destroy();
-	HRESULT CreateNamedObject(const char* prefix, uint32_t& idGenerater, std::function<HANDLE(const char*)> createFunc, NamedOsObject** object);
+	HRESULT CreateNamedObject(const wchar_t* prefix, uint32_t& idGenerater, std::function<HANDLE(const wchar_t*)> createFunc, NamedOsObject** object);
 
 	NamedOsObject* mapFile_ = nullptr;
 	NamedOsObject* mutex_ = nullptr;
 
-	static constexpr auto MappedFileGUID = "Global\\{847AE6E8-B219-469A-8E3A-398630F4D3A5}";
-	static constexpr auto MutexGUID = "Global\\{46E8D01A-982A-4EAE-966F-B2A62988B8E3}";
-	static constexpr auto MarshalSyncGUID = "Global\\{AACC91E5-B1DB-4A8A-98BB-943B526E09AF}";
+	static constexpr auto MappedFileGUID = L"Global\\{847AE6E8-B219-469A-8E3A-398630F4D3A5}";
+	static constexpr auto MutexGUID = L"Global\\{46E8D01A-982A-4EAE-966F-B2A62988B8E3}";
+	static constexpr auto MarshalSyncGUID = L"Global\\{AACC91E5-B1DB-4A8A-98BB-943B526E09AF}";
 
 	void* addr_ = nullptr;
 	DWORD size_ = 0;
