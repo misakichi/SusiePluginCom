@@ -55,15 +55,9 @@ private:
 	NamedOsObject* mapFile_ = nullptr;
 	NamedOsObject* mutex_ = nullptr;
 
-<<<<<<< HEAD
 	static constexpr auto MappedFileGUID = L"Local\\{847AE6E8-B219-469A-8E3A-398630F4D3A5}";
 	static constexpr auto MutexGUID = L"Local\\{46E8D01A-982A-4EAE-966F-B2A62988B8E3}";
 	static constexpr auto MarshalSyncGUID = L"Local\\{AACC91E5-B1DB-4A8A-98BB-943B526E09AF}";
-=======
-	static constexpr auto MappedFileGUID = L"Global\\{847AE6E8-B219-469A-8E3A-398630F4D3A5}";
-	static constexpr auto MutexGUID = L"Global\\{46E8D01A-982A-4EAE-966F-B2A62988B8E3}";
-	static constexpr auto MarshalSyncGUID = L"Global\\{AACC91E5-B1DB-4A8A-98BB-943B526E09AF}";
->>>>>>> 057d6fec3a2ee1369fab6c969941df3f7fede25b
 
 	void* addr_ = nullptr;
 	DWORD size_ = 0;
