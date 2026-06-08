@@ -150,6 +150,9 @@
       <SubSystem>Windows</SubSystem>
       <ModuleDefinitionFile>$(ProjectName).def</ModuleDefinitionFile>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -185,7 +188,8 @@
       </TypeLibraryFile>
     </Link>
     <PostBuildEvent>
-      <Command>%systemroot%\SysWoW64\regsvr32.exe $(TargetPath)</Command>
+      <Command>%systemroot%\SysWoW64\regsvr32.exe $(TargetPath)
+copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -222,7 +226,8 @@
       <ModuleDefinitionFile>$(ProjectName).def</ModuleDefinitionFile>
     </Link>
     <PostBuildEvent>
-      <Command>%systemroot%\SysWoW64\regsvr32.exe $(TargetPath)</Command>
+      <Command>%systemroot%\SysWoW64\regsvr32.exe $(TargetPath)
+copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -257,6 +262,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
+    <PostBuildEvent>
+      <Command>copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
