@@ -7,6 +7,8 @@
 #include "olectl.h"
 #include <strsafe.h>
 
+#define USE_TYPELIB
+
 #if defined(_M_IX86)
 SusiePluginComGenericFactory<SusiePluginIF> spFactory;
 #endif
@@ -134,15 +136,18 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 			if (cls.isServer)
 			{
 				wchar_t inprocKey[256];
-#if defined(_M_IX86)
 				StringCchPrintfW(inprocKey, 256, L"%s\\InprocServer32", clsidKey);
-#else
-				StringCchPrintfW(inprocKey, 256, L"%s\\InprocServer64", clsidKey);
-#endif
 				if (FAILED(hr = RegisterKey(HKEY_CLASSES_ROOT, inprocKey, modulePath)))
 					break;
 				if (FAILED(hr = RegSetKeyValueW_HR(HKEY_CLASSES_ROOT, inprocKey, L"ThreadingModel", REG_SZ, L"Both", sizeof(L"Both"))))
 					break;
+#if !defined(_M_IX86)
+				StringCchPrintfW(inprocKey, 256, L"%s\\InprocServer64", clsidKey);
+				if (FAILED(hr = RegisterKey(HKEY_CLASSES_ROOT, inprocKey, modulePath)))
+					break;
+				if (FAILED(hr = RegSetKeyValueW_HR(HKEY_CLASSES_ROOT, inprocKey, L"ThreadingModel", REG_SZ, L"Both", sizeof(L"Both"))))
+					break;
+#endif
 			}
 
 		}
@@ -158,11 +163,14 @@ extern "C" HRESULT __stdcall DllRegisterServer()
 #else
 		wcscpy_s(lastDirSplt, MAX_PATH - (lastDirSplt - modulePath), L"SusiePluginCom.tlb");
 #endif
+
+#ifdef USE_TYPELIB
 		ITypeLib* pTypeLib = nullptr;
 		if (FAILED(hr = LoadTypeLibEx(modulePath, REGKIND_REGISTER, &pTypeLib)))
 			break;
 		if (pTypeLib) 
 			pTypeLib->Release();
+#endif
 	} while (0);
 
 	if(FAILED(hr))
@@ -184,8 +192,12 @@ extern "C" HRESULT __stdcall DllUnregisterServer()
 			hrRet = HRESULT_FROM_WIN32(ERROR_OUTOFMEMORY);
 		if(FAILED(hr=StringCchPrintfW(clsidKey, 256, L"CLSID\\%s", guidStr)))
 			hrRet = hr;
-		if(FAILED(hr=HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, clsidKey))))
-			hrRet = hr;
+
+		LONG r = RegDeleteTreeW(HKEY_CLASSES_ROOT, clsidKey);
+		if (r != ERROR_SUCCESS && r != ERROR_FILE_NOT_FOUND)
+			hrRet = HRESULT_FROM_WIN32(r);
+		//if(FAILED(hr=HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, clsidKey))))
+		//	hrRet = hr;
 	}
 
 	if (StringFromGUID2(LIBID_SusiePluginCom, guidStr, 64) == 0)
@@ -194,11 +206,22 @@ extern "C" HRESULT __stdcall DllUnregisterServer()
 	wchar_t appidKey[256];
 	if(FAILED(hr=StringCchPrintfW(appidKey, 256, L"AppID\\%s", guidStr)))
 		hrRet = hr;
-	if(FAILED(hr=HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, appidKey))))
-		hrRet = hr;
 
-	if(FAILED(hr=UnRegisterTypeLib(LIBID_SusiePluginCom, 1, 0, LOCALE_NEUTRAL, SYS_WIN32 )))
-		hrRet = hr;
+	LONG r = RegDeleteTreeW(HKEY_CLASSES_ROOT, appidKey);
+	if (r != ERROR_SUCCESS && r != ERROR_FILE_NOT_FOUND)
+		hrRet = HRESULT_FROM_WIN32(r);
+	//if(FAILED(hr=HRESULT_FROM_WIN32(RegDeleteTreeW(HKEY_CLASSES_ROOT, appidKey))))
+	//	hrRet = hr;
+	
+#ifdef USE_TYPELIB
+	hr = UnRegisterTypeLib(LIBID_SusiePluginCom, 1, 0, LOCALE_NEUTRAL, SYS_WIN32);
+	if (FAILED(hr)) {
+		// 既に消えている／見つからない系は無視してよい
+		if (hr != TYPE_E_LIBNOTREGISTERED && hr != TYPE_E_REGISTRYACCESS) {
+			hrRet = hr;
+		}
+	}
+#endif
 
 	return hrRet;
 }

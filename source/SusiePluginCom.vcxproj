@@ -227,6 +227,7 @@ copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
     </Link>
     <PostBuildEvent>
       <Command>%systemroot%\SysWoW64\regsvr32.exe $(TargetPath)
+copy $(TargetDir)$(TargetName).tlb $(SolutionDir)..\reg\$(TargetName).tlb
 copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -263,7 +264,8 @@ copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
+      <Command>copy $(TargetDir)$(TargetName).tlb $(SolutionDir)..\reg\$(TargetName).tlb
+copy $(TargetPath) $(SolutionDir)..\reg\$(TargetFileName)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
