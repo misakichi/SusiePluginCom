@@ -321,8 +321,6 @@ HRESULT STDMETHODCALLTYPE SusiePluginIF::GetPreviewFile(BSTR filename, ISharedMe
 	if (bmp == nullptr)
 		return E_POINTER;
 
-	return S_OK;
-
 	SusiePictureInfo spiInfo = {};
 	int ret = 0;
 	HANDLE hInfo, hBmp;

@@ -61,7 +61,7 @@ int main()
 	if(SUCCEEDED(hr) && plugin)
 	{
 		printf("Plugin interface create successfully.\n");
-#define GIF_TEST
+//#define GIF_TEST
 #ifndef GIF_TEST
 		if(FAILED(hr = plugin->Load(SysAllocString(L"C:\\projects\\SusiePluginCom\\source\\Debug\\ifjpeg.spi"))))
 		{
