@@ -94,12 +94,12 @@ int main()
 			const wchar_t* testFilePath[] =
 			{
 #ifdef GIF_TEST
-				L"D:\\#######\\usb16\\痴漢男\\1_11.gif",
+				L"test\\gif\\1.gif",
 #else
-				L"C:\\projects\\SusiePluginCom\\source\\Debug\\DSC_0696.jpg",
-				L"C:\\projects\\SusiePluginCom\\source\\Debug\\DSC_0697.jpg",
-				L"C:\\projects\\SusiePluginCom\\source\\Debug\\DSC_0698.jpg",
-				L"C:\\projects\\SusiePluginCom\\source\\Debug\\pngnow.png",
+				L"test\\jpg\\1.jpg",
+				L"test\\jpg\\2.jpg",
+				L"test\\jpg\\3.jpg",
+				L"test\\png\\1.png",
 #endif
 			};
 			wprintf(L"IsSupportedStream test(Stream):\n");
